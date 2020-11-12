@@ -94,8 +94,8 @@ is represented by a type `V`.
 """
 mutable struct GeneralKnotPoint{T,N,M,V} <: AbstractKnotPoint{T,N,M}
     z::V
-    _x::SVector{N,Int}
-    _u::SVector{M,Int}
+    _x::UnitRange{Int64}
+    _u::UnitRange{Int64}
     dt::T # time step
     t::T  # total time
 end
@@ -131,10 +131,10 @@ KnotPoint(x, u, dt, [t=0.0])
 KnotPoint(x, m, [t=0.0])  # for terminal knot point
 ```
 """
-const KnotPoint{T,N,M,NM} = GeneralKnotPoint{T,N,M,SVector{NM,T}} where {T,N,M,NM}
+const KnotPoint{T,N,M} = GeneralKnotPoint{T,N,M,Array{T,1}} where {T,N,M}
 
-function KnotPoint(z::V, ix::SVector{n,Int}, iu::SVector{m,Int}, dt::T, t::T) where {n,m,T,V}
-    GeneralKnotPoint{T,n,m,V}(z, ix, iu, dt, t)
+function KnotPoint(z::V, ix, iu, dt::T, t::T) where {n,m,T,V}
+    GeneralKnotPoint{T,length(ix),length(iu),V}(z, ix, iu, dt, t)
 end
 
 function KnotPoint(x::AbstractVector, u::AbstractVector, dt::Float64, t=0.0)
@@ -142,10 +142,10 @@ function KnotPoint(x::AbstractVector, u::AbstractVector, dt::Float64, t=0.0)
     m = length(u)
     xinds = ones(Bool, n+m)
     xinds[n+1:end] .= 0
-    _x = SVector{n}(1:n)
-    _u = SVector{m}(n .+ (1:m))
-    z = SVector{n+m}([x;u])
-    KnotPoint(z, _x, _u, dt, t)
+    _x = 1:n
+    _u = n .+ (1:m)
+    z = [x;u]
+    GeneralKnotPoint{typeof(dt),n,m,typeof(z)}(z, _x, _u, dt, t)
 end
 
 # Constructor for terminal time step
