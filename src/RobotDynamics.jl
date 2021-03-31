@@ -24,24 +24,24 @@ export
     state_diff_size,
     rollout!
 
-# rigid bodies
-export
-    LieGroupModel,
-    RigidBody,
-    RBState,
-    orientation,
-    linear_velocity,
-    angular_velocity
+# # rigid bodies
+# export
+#     LieGroupModel,
+#     RigidBody,
+#     RBState,
+#     orientation,
+#     linear_velocity,
+#     angular_velocity
 
-# linear model
-export
-    LinearModel,
-    linear_dynamics,
-    LinearizedModel,
-    linearize_and_discretize!,
-    discretize,
-    discretize!,
-    update_trajectory!
+# # linear model
+# export
+#     LinearModel,
+#     linear_dynamics,
+#     LinearizedModel,
+#     linearize_and_discretize!,
+#     discretize,
+#     discretize!,
+#     update_trajectory!
 
 # knotpoints
 export
@@ -67,16 +67,16 @@ export
     Exponential
 
 
-include("rbstate.jl")
+# include("rbstate.jl")
 include("jacobian.jl")
 include("knotpoint.jl")
 include("model.jl")
-include("liestate.jl")
-include("rigidbody.jl")
+# include("liestate.jl")
+# include("rigidbody.jl")
 include("integration.jl")
 include("trajectories.jl")
-include("linearmodel.jl")
-include("linearization.jl")
-include("plot_recipes.jl")
+# include("linearmodel.jl")
+# include("linearization.jl")
+# include("plot_recipes.jl")
 
 end # module
