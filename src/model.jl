@@ -209,11 +209,13 @@ Compute the `n × (n+m)` discrete dynamics Jacobian `∇f` of `model` using expl
 integration scheme `Q<:QuadratureRule`.
 """
 function discrete_jacobian!(::Type{Q}, ∇f, model::AbstractModel,
-		z::AbstractKnotPoint{T,N,M}) where {T,N,M,Q<:Explicit}
-    ix,iu,idt = z._x, z._u, N+M+1
+		                    z::AbstractKnotPoint) where {Q<:Explicit}
+    ix = z.ix
+    iu = z.iu
+    dt = z.dt
     t = z.t
-    fd_aug(s) = discrete_dynamics(Q, model, s[ix], s[iu], t, z.dt)
-    ∇f .= ForwardDiff.jacobian(fd_aug, SVector{N+M}(z.z))
+    fd_aug(s) = discrete_dynamics(Q, model, s[ix], s[iu], t, dt)
+    ∇f .= ForwardDiff.jacobian(fd_aug, z.z)
 	return nothing
 end
 
