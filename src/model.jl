@@ -215,8 +215,19 @@ function discrete_jacobian!(::Type{Q}, ∇f, model::AbstractModel,
     dt = z.dt
     t = z.t
     fd_aug(s) = discrete_dynamics(Q, model, s[ix], s[iu], t, dt)
-    ∇f .= ForwardDiff.jacobian(fd_aug, z.z)
+    ForwardDiff.jacobian!(∇f, fd_aug, z.z)
 	return nothing
+end
+
+function discrete_jacobian!(D::AbstractMatrix, A::AbstractMatrix, B::AbstractMatrix,
+                            IR, model::AbstractModel, x::AbstractVector,
+                           u::AbstractVector, t::T, dt::T, ix::AbstractVector,
+                           iu::AbstractVector) where {T}
+    f(z_) = discrete_dynamics(IR, model, z_[ix], z_[iu], t, dt)
+    z = [x; u]
+    ForwardDiff.jacobian!(D, f, z)
+    A .= D[ix, ix]
+    B .= D[ix, iu]
 end
 
 ############################################################################################
@@ -230,7 +241,7 @@ state_diff(model::AbstractModel, x, x0) = x - x0
 @inline state_diff_jacobian!(G, model::AbstractModel, z::AbstractKnotPoint) =
 	state_diff_jacobian!(G, model, state(z))
 
-function state_diff_jacobian!(G, model::AbstractModel, x::StaticVector)
+function state_diff_jacobian!(G, model::AbstractModel, x::AbstractVector)
 	for i in 1:length(x)
 		G[i,i] = 1
 	end

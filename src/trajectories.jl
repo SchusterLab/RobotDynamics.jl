@@ -55,8 +55,7 @@ struct Traj{Tk} <: AbstractTrajectory
 	data::Vector{Tk}
 end
 
-function Traj(Z::Vector{Tz}, ix::Tix, iu::Tiu, dts::Vector{T}, ts=cumsum(dt) .- dt[1])
-    where {Tz,Tix,Tiu,T}
+function Traj(Z::Vector{Tz}, ix::Tix, iu::Tiu, dts::Vector{T}, ts=cumsum(dt) .- dt[1]) where {Tz,Tix,Tiu,T}
     N = length(Z)
     Tk = GeneralKnotPoint{Tz,Tix,Tiu,T}
     data = Vector{Tk}(undef, N)

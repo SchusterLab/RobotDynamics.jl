@@ -93,14 +93,14 @@ function Base.:+(z1::AbstractKnotPoint, z2::AbstractKnotPoint)
 end
 
 
-function Base.:+(z::Tk<:AbstractKnotPoint, x::AbstractVector) where {Tk}
+function Base.:+(z::Tk, x::AbstractVector) where {Tk<:AbstractKnotPoint}
 	Tk(z.z + x, z.ix, z.iu, z.dt, z.t, z1.terminal)
 end
 
 
 @inline Base.:+(x::AbstractVector, z1::AbstractKnotPoint) = z1 + x
 
-function Base.:*(a::Real, z::Tk<:AbstractKnotPoint) where {Tk}
+function Base.:*(a::Real, z::Tk) where {Tk<:AbstractKnotPoint}
 	Tk(z.z*a, z.ix, z.iu, z.dt, z.t, z.terminal)
 end
 
@@ -125,8 +125,7 @@ mutable struct GeneralKnotPoint{Tz,Tix,Tiu,T} <: AbstractKnotPoint
     terminal::Bool
 end
 
-function GeneralKnotPoint(z::Tz, ix::Tix, iu::Tiu, dt::T, t::T, terminal=false)
-    where {Tz,Tix,Tiu,T}
+function GeneralKnotPoint(z::Tz, ix::Tix, iu::Tiu, dt::T, t::T, terminal=false) where {Tz,Tix,Tiu,T}
     return GeneralKnotPoint{Tz,Tix,Tiu,T}(z, ix, iu, dt, t, terminal)
 end
 
