@@ -16,6 +16,7 @@ export
     dynamics,
     jacobian!,
     discrete_dynamics,
+    discrete_dynamics!,
     discrete_jacobian!,
     linearize,
     linearize!,

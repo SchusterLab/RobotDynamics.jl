@@ -188,6 +188,11 @@ The default integration scheme is stored in `TrajectoryOptimization.DEFAULT_Q`
 @inline discrete_dynamics(::Type{Q}, model::AbstractModel, x, u, t, dt) where Q =
     integrate(Q, model, x, u, t, dt)
 
+@inline discrete_dynamics!(x_::AbstractVector, ::Type{Q}, model::AbstractModel, x::AbstractVector,
+                           u::AbstractVector, t::Real, dt::Real) where {Q} = (
+                               x_ .= discrete_dynamics(Q, model, x, u, t, dt)
+)
+
 
 """
 	propagate_dynamics(::Type{Q}, model, z_, z)
@@ -235,6 +240,12 @@ end
 ############################################################################################
 
 state_diff(model::AbstractModel, x, x0) = x - x0
+function state_diff!(δx::AbstractVector, model::AbstractModel, x::AbstractVector,
+                     x0::AbstractVector)
+    δx .= x
+    δx .-= x0
+    return nothing
+end
 @inline state_diff_jacobian(model::AbstractModel, x::SVector{N,T}) where {N,T} = I
 @inline state_diff_size(model::AbstractModel) = size(model)[1]
 
