@@ -131,45 +131,45 @@ end
 """Default size method for model (assumes model has fields n and m)"""
 @inline Base.size(model::AbstractModel) = state_dim(model), control_dim(model)
 
-############################################################################################
-#                               CONTINUOUS TIME METHODS                                    #
-############################################################################################
-"""
-	ẋ = dynamics(model, z::AbstractKnotPoint)
-	ẋ = dynamics(model, x, u, [t=0])
+# ############################################################################################
+# #                               CONTINUOUS TIME METHODS                                    #
+# ############################################################################################
+# """
+# 	ẋ = dynamics(model, z::AbstractKnotPoint)
+# 	ẋ = dynamics(model, x, u, [t=0])
 
-Compute the continuous dynamics of a forced dynamical given the states `x`, controls `u` and
-time `t` (optional).
-"""
-@inline dynamics(model::AbstractModel, z::AbstractKnotPoint) = dynamics(model, state(z), control(z), z.t)
+# Compute the continuous dynamics of a forced dynamical given the states `x`, controls `u` and
+# time `t` (optional).
+# """
+# @inline dynamics(model::AbstractModel, z::AbstractKnotPoint) = dynamics(model, state(z), control(z), z.t)
 
-# Default to not passing in t
-@inline dynamics(model::AbstractModel, x, u, t) = dynamics(model, x, u)
+# # Default to not passing in t
+# @inline dynamics(model::AbstractModel, x, u, t) = dynamics(model, x, u)
 
-"""
-	∇f = jacobian!(∇f, model, z::AbstractKnotPoint)
+# """
+# 	∇f = jacobian!(∇f, model, z::AbstractKnotPoint)
 
-Compute the `n × (n + m)` Jacobian `∇f` of the continuous-time dynamics using ForwardDiff.
-Only accepts an `AbstractKnotPoint` as input in order to avoid potential allocations
-associated with concatenation.
-"""
-function jacobian!(∇f::AbstractMatrix, model::AbstractModel, z::AbstractKnotPoint)
-    ix, iu = z._x, z._u
-	t = z.t
-    f_aug(z) = dynamics(model, z[ix], z[iu], t)
-    s = z.z
-	ForwardDiff.jacobian!(get_data(∇f), f_aug, s)
-end
+# Compute the `n × (n + m)` Jacobian `∇f` of the continuous-time dynamics using ForwardDiff.
+# Only accepts an `AbstractKnotPoint` as input in order to avoid potential allocations
+# associated with concatenation.
+# """
+# function jacobian!(∇f::AbstractMatrix, model::AbstractModel, z::AbstractKnotPoint)
+#     ix, iu = z._x, z._u
+# 	t = z.t
+#     f_aug(z) = dynamics(model, z[ix], z[iu], t)
+#     s = z.z
+# 	ForwardDiff.jacobian!(get_data(∇f), f_aug, s)
+# end
 
-DynamicsJacobian(model::AbstractModel) = DynamicsJacobian(state_dim(model), control_dim(model))
+# DynamicsJacobian(model::AbstractModel) = DynamicsJacobian(state_dim(model), control_dim(model))
 
 ############################################################################################
 #                          EXPLICIT DISCRETE TIME METHODS                                  #
 ############################################################################################
 
 # Set default integrator
-@inline discrete_dynamics(model::AbstractModel, z::AbstractKnotPoint) =
-    discrete_dynamics(DEFAULT_Q, model, z)
+# @inline discrete_dynamics(model::AbstractModel, z::AbstractKnotPoint) =
+#     discrete_dynamics(DEFAULT_Q, model, z)
 
 """ Compute the discretized dynamics of `model` using explicit integration scheme `Q<:QuadratureRule`.
 
@@ -182,8 +182,8 @@ x′ = discrete_dynamics(Q, model, z::KnotPoint)
 
 The default integration scheme is stored in `TrajectoryOptimization.DEFAULT_Q`
 """
-@inline discrete_dynamics(::Type{Q}, model::AbstractModel, z::AbstractKnotPoint) where Q<:Explicit =
-    discrete_dynamics(Q, model, state(z), control(z), z.t, z.dt)
+# @inline discrete_dynamics(::Type{Q}, model::AbstractModel, z::AbstractKnotPoint) where Q<:Explicit =
+#     discrete_dynamics(Q, model, state(z), control(z), z.t, z.dt)
 
 @inline discrete_dynamics(::Type{Q}, model::AbstractModel, x, u, t, dt) where Q =
     integrate(Q, model, x, u, t, dt)
@@ -202,10 +202,10 @@ storing the result in the states of knot point `z_`.
 
 Useful for propagating dynamics along a trajectory of knot points.
 """
-function propagate_dynamics(::Type{Q}, model::AbstractModel, z_::AbstractKnotPoint, z::AbstractKnotPoint) where Q<:Explicit
-    x_next = discrete_dynamics(Q, model, z)
-    set_state!(z_, x_next)
-end
+# function propagate_dynamics(::Type{Q}, model::AbstractModel, z_::AbstractKnotPoint, z::AbstractKnotPoint) where Q<:Explicit
+#     x_next = discrete_dynamics(Q, model, z)
+#     set_state!(z_, x_next)
+# end
 
 """
 	∇f = discrete_jacobian!(Q, ∇f, model, z::AbstractKnotPoint)
@@ -213,16 +213,16 @@ end
 Compute the `n × (n+m)` discrete dynamics Jacobian `∇f` of `model` using explicit
 integration scheme `Q<:QuadratureRule`.
 """
-function discrete_jacobian!(::Type{Q}, ∇f, model::AbstractModel,
-		                    z::AbstractKnotPoint) where {Q<:Explicit}
-    ix = z.ix
-    iu = z.iu
-    dt = z.dt
-    t = z.t
-    fd_aug(s) = discrete_dynamics(Q, model, s[ix], s[iu], t, dt)
-    ForwardDiff.jacobian!(∇f, fd_aug, z.z)
-	return nothing
-end
+# function discrete_jacobian!(::Type{Q}, ∇f, model::AbstractModel,
+# 		                    z::AbstractKnotPoint) where {Q<:Explicit}
+#     ix = z.ix
+#     iu = z.iu
+#     dt = z.dt
+#     t = z.t
+#     fd_aug(s) = discrete_dynamics(Q, model, s[ix], s[iu], t, dt)
+#     ForwardDiff.jacobian!(∇f, fd_aug, z.z)
+# 	return nothing
+# end
 
 function discrete_jacobian!(D::AbstractMatrix, A::AbstractMatrix, B::AbstractMatrix,
                             IR, model::AbstractModel, x::AbstractVector,
@@ -249,8 +249,8 @@ end
 @inline state_diff_jacobian(model::AbstractModel, x::SVector{N,T}) where {N,T} = I
 @inline state_diff_size(model::AbstractModel) = size(model)[1]
 
-@inline state_diff_jacobian!(G, model::AbstractModel, z::AbstractKnotPoint) =
-	state_diff_jacobian!(G, model, state(z))
+# @inline state_diff_jacobian!(G, model::AbstractModel, z::AbstractKnotPoint) =
+# 	state_diff_jacobian!(G, model, state(z))
 
 function state_diff_jacobian!(G, model::AbstractModel, x::AbstractVector)
 	for i in 1:length(x)
